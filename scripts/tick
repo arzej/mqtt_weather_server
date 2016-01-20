@@ -1,0 +1,5 @@
+#!/bin/sh
+while true; do
+    echo 22*C
+    sleep 5
+done | mosquitto_pub -l -t "sensor/out/temp"
