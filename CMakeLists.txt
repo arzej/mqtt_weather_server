@@ -14,6 +14,10 @@ OPTION(BUILD_ENABLE_WARNINGS "Enable compiler warnings." ON)
 
 MESSAGE("Build type: ${CMAKE_BUILD_TYPE}")
 
+# enable c++11 (required for all platforms)
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++0x")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+
 ## build in PIC mode
 IF (NOT WIN32)
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
@@ -72,7 +76,7 @@ if(LIBSOUP_INCLUDE_DIRS AND LIBSOUP_LIBRARIES)
 else()
     if(NOT LIBSOUP_INCLUDE_DIRS)
         MESSAGE(SEND_ERROR "Failed to find libsoup.h")
-    endif() 
+    endif()
     if(NOT LIBSOUP_LIBRARIES)
         MESSAGE(SEND_ERROR "Failed to find the libsoup library")
     endif()
