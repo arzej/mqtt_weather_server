@@ -5,20 +5,19 @@
 #include <string.h>
 #include <iostream>
 #include <unistd.h>
-#include <mosquittopp.h>
-
-#include "mosq.h"
 #include "dbstorage.h"
+#include "mqttserver.h"
 
 static int run = 1;
 
 void handle_signal(int s) {
+    std::cout << "signal stop" << std::endl;
     run = 0;
 }
 
 int main(int argc, char *argv[]) {
-    int rc, i, j;
-	class myMosq *mosq=NULL;
+    int i, j;
+    mqttserver mqtt;
     const char *dbpath=NULL;
     for (i=1; i<argc; i++) {
         if (!strcmp(argv[i], "--dbpath")) {
@@ -44,17 +43,15 @@ int main(int argc, char *argv[]) {
     }
     std::cout << "params:" << std::endl;
     std::cout << "dbpath " << dbpath << std::endl;
-	mosq = new myMosq("collector", "sensor/#", mqtt_host, mqtt_port);
     dbstorage::getInstance().init("test.db");
-  //signal(SIGINT, handle_signal);
-  //signal(SIGTERM, handle_signal);
-	while(run) {
-		rc = mosq->loop();
-		if(rc) {
-			mosq->reconnect();
-		}
+    mqtt.start();
+    signal(SIGINT, handle_signal);
+    signal(SIGTERM, handle_signal);
+    while(run) {
+        sleep(1);
 	}
+    std::cout << "bye bye" << std::endl;
+    mqtt.stop();
     dbstorage::getInstance().term();
-	delete mosq;
 	return 0;
 }
