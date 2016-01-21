@@ -1,28 +1,28 @@
 #include <libsoup/soup.h>
 #include "httpd.h"
-#include "httpdcore.h"
+#include "httpserver.h"
 
-httpdcore::httpdcore() : m_soupServer(NULL)
+httpserver::httpserver() : m_soupServer(NULL)
 {
 
 }
 
-httpdcore::~httpdcore()
+httpserver::~httpserver()
 {
 
 }
 
-int httpdcore::init()
+int httpserver::init()
 {
-
+    return -1;
 }
 
-int httpdcore::term()
+int httpserver::term()
 {
-
+    return -1;
 }
 
-int httpdcore::registerHttpCallbackRequest(const char* path, httpd::uri_handler_f handler, void* param)
+int httpserver::registerHttpCallbackRequest(const char* path, httpd::uri_handler_f handler, void* param)
 {
-
+    return -1;
 }

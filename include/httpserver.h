@@ -1,29 +1,30 @@
-#ifndef HTTPDCORE_H
-#define	HTTPDCORE_H
+#ifndef HTTPSERVER_H
+#define	HTTPSERVER_H
 
 #include <libsoup/soup.h>
 #include <map>
 #include <string>
 
-//#include "sync_sem.h"
-
-class httpdcore
+class httpserver
 {
 public:
-  httpdcore();
-  ~httpdcore();
+  httpserver();
+  ~httpserver();
 
   int init();
   int term();
 
-  int registerHttpCallbackRequest(const char* path, httpd::uri_handler_f handler, void* param);
+  int registerHttpCallbackRequest(const char* path,
+                                  httpd::uri_handler_f handler,
+                                  void* param);
 
-  friend void soupServerCallback0(SoupServer *server, SoupMessage *msg,
-                                  const char *path, GHashTable *query,
-                                  SoupClientContext *client, gpointer user_data);
-
+  friend void soupServerCallback0(SoupServer *server,
+                                  SoupMessage *msg,
+                                  const char *path,
+                                  GHashTable *query,
+                                  SoupClientContext *client,
+                                  gpointer user_data);
 private:
-
   typedef struct http_handler_s
   {
     httpd::uri_handler_f handler;

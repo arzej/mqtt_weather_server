@@ -5,7 +5,7 @@
 #include <map>
 #include <vector>
 
-class httpdcore;
+class httpserver;
 
 class httpd
 {
@@ -69,7 +69,7 @@ private:
   httpd();
   ~httpd();
 
-  httpdcore* m_httpdcore;
+  httpserver* m_httpserver;
 };
 
 
