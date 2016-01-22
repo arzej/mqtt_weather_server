@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
         sleep(1);
 	}
     std::cout << "bye bye" << std::endl;
-    mqtt.stop();
+    mqtt.term();
     dbstorage::getInstance().term();
     httpd::getInstance().term();
 	return 0;

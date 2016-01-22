@@ -20,15 +20,16 @@ void mqttserver::init() {
 }
 
 void mqttserver::term() {
-    stop();
     run=false;
+    mosq->disconnect();
+    stop();
 }
 
 void mqttserver::doTask() {
     int rc;
     while(run) {
         if (mosq!=NULL) {
-            rc = mosq->loop();
+            rc = mosq->loop(1, 1);
             if(rc) {
                 mosq->reconnect();
             }
