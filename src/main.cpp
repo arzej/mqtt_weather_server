@@ -5,10 +5,11 @@
 #include <string.h>
 #include <iostream>
 #include <unistd.h>
+#include <exception>
 #include "dbstorage.h"
 #include "mqttserver.h"
 #include "lock.h"
-
+#include "httpd.h"
 
 static int run = 1;
 
@@ -52,6 +53,7 @@ int main(int argc, char *argv[]) {
     std::cout << "dbpath " << dbpath << std::endl;
     dbstorage::getInstance().init("test.db");
     mqtt.start();
+    httpd::getInstance().init();
     signal(SIGINT, handle_signal);
     signal(SIGTERM, handle_signal);
     while(run) {
@@ -60,5 +62,6 @@ int main(int argc, char *argv[]) {
     std::cout << "bye bye" << std::endl;
     mqtt.stop();
     dbstorage::getInstance().term();
+    httpd::getInstance().term();
 	return 0;
 }
