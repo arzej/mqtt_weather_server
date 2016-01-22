@@ -7,6 +7,8 @@
 #include <unistd.h>
 #include "dbstorage.h"
 #include "mqttserver.h"
+#include "lock.h"
+
 
 static int run = 1;
 
@@ -18,6 +20,11 @@ void handle_signal(int s) {
 int main(int argc, char *argv[]) {
     int i, j;
     mqttserver mqtt;
+    lock l;
+    if (!l.isLocked()) {
+        std::cout << "pid file is locked, another instance is running?" << std::endl;
+        return 0;
+    }
     const char *dbpath=NULL;
     for (i=1; i<argc; i++) {
         if (!strcmp(argv[i], "--dbpath")) {
