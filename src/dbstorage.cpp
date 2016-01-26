@@ -9,9 +9,9 @@
 
 //http://www.tutorialspoint.com/sqlite/sqlite_c_cpp.htm
 
-static int db_callback(void *NotUsed, int argc, char **argv, char **azColName){
+static int db_callback(void *NotUsed, int argc, char **argv, char **azColName) {
    int i;
-   for(i=0; i<argc; i++){
+   for(i=0; i<argc; i++) {
       printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
    }
    printf("\n");
@@ -42,14 +42,14 @@ int dbstorage::init() {
     int rc=-1;
     if (m_path!=NULL) {
         if (open()==0) {
-            if (!table_exists())
-            {
-                if (table_create()==0)
-                {
+            if (!table_exists()) {
+                if (table_create()==0) {
                     is_open=true;
                     rc = 0;
                 }
             }
+            table_average_create();
+            triggers_create();
         }
     }
     return rc;
@@ -79,10 +79,10 @@ int dbstorage::open(const char *path) {
    int rc;
    /* Open database */
    rc = sqlite3_open(m_path, &m_db);
-   if( rc ){
+   if (rc) {
       fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(m_db));
       rc=-1;
-   }else{
+   } else {
       fprintf(stderr, "Opened database successfully\n");
    }
    return rc;
@@ -102,7 +102,7 @@ int dbstorage::table_create() {
    char *zErrMsg = 0;
    /* Execute SQL statement */
    rc = sqlite3_exec(m_db, sql, db_callback, (void*)data, &zErrMsg);
-   if( rc != SQLITE_OK ) {
+   if (rc != SQLITE_OK) {
       std::cout << "table_create error" << std::endl;
       fprintf(stderr, "SQL error: %s\n", zErrMsg);
       sqlite3_free(zErrMsg);
@@ -120,7 +120,7 @@ bool dbstorage::table_exists() {
    char *zErrMsg = 0;
    /* Execute SQL statement */
    rc = sqlite3_exec(m_db, sql, db_callback, (void*)data, &zErrMsg);
-   if( rc != SQLITE_OK ) {
+   if (rc != SQLITE_OK) {
       std::cout << "table_exists error" << std::endl;
       fprintf(stderr, "SQL error: %s\n", zErrMsg);
       sqlite3_free(zErrMsg);
@@ -137,7 +137,7 @@ int dbstorage::table_remove() {
    char *zErrMsg = 0;
    // Execute SQL statement //
    rc = sqlite3_exec(m_db, sql, db_callback, (void*)data, &zErrMsg);
-   if( rc != SQLITE_OK ) {
+   if (rc != SQLITE_OK) {
       fprintf(stderr, "SQL error: %s\n", zErrMsg);
       sqlite3_free(zErrMsg);
    } else {
@@ -163,7 +163,7 @@ int dbstorage::add(const char *location, const char *sensor, const char *value) 
 
    // Execute SQL statement //
    rc = sqlite3_exec(m_db, sql.str().c_str(), db_callback, (void*)data, &zErrMsg);
-   if( rc != SQLITE_OK ) {
+   if (rc != SQLITE_OK) {
       fprintf(stderr, "SQL error: %s\n", zErrMsg);
       sqlite3_free(zErrMsg);
    } else {
@@ -172,3 +172,71 @@ int dbstorage::add(const char *location, const char *sensor, const char *value) 
    return rc;
 }
 
+int dbstorage::table_average_create() {
+   const char *sql =    "CREATE TABLE IF NOT EXISTS average (" \
+                        "    LOCATION STRING (32) PRIMARY KEY" \
+                        "                         NOT NULL," \
+                        "    SENSOR   STRING (32) NOT NULL,"\
+                        "    VALUE    DOUBLE      NOT NULL" \
+                        ");";
+
+   int rc;
+   const char* data = "Callback function called";
+   char *zErrMsg = 0;
+   /* Execute SQL statement */
+   rc = sqlite3_exec(m_db, sql, db_callback, (void*)data, &zErrMsg);
+   if (rc != SQLITE_OK) {
+      std::cout << "table_create error" << std::endl;
+      fprintf(stderr, "SQL error: %s\n", zErrMsg);
+      sqlite3_free(zErrMsg);
+   } else {
+      fprintf(stdout, "create table operation done successfully\n");
+   }
+   return rc;
+}
+
+int dbstorage::triggers_create() {
+    std::stringstream sql;
+    int rc;
+    const char* data = "Callback function called";
+    char *zErrMsg = 0;
+
+    sql << "CREATE TRIGGER update_average_value_after_insert";
+    sql << "AFTER INSERT";
+    sql << "ON sensors";
+    sql << "FOR EACH ROW";
+    sql << "BEGIN";
+    sql << "INSERT OR IGNORE INTO average (";
+    sql << "       LOCATION,";
+    sql << "       SENSOR,";
+    sql << "       VALUE";
+    sql << "       )";
+    sql << "       VALUES (";
+    sql << "       NEW.LOCATION,";
+    sql << "       NEW.SENSOR,";
+    sql << "       NEW.VALUE";
+    sql << "       );";
+    sql << "UPDATE average";
+    sql << "SET VALUE = (";
+    sql << "        SELECT AVG(VALUE)";
+    sql << "          FROM sensors";
+    sql << "         WHERE LOCATION == NEW.LOCATION AND";
+    sql << "               TIME >= datetime('now', '-1 hour') AND";
+    sql << "               SENSOR == NEW.SENSOR";
+    sql << ")";
+    sql << "WHERE LOCATION == NEW.LOCATION AND";
+    sql << "SENSOR == NEW.SENSOR;";
+    sql << "END;";
+
+    std::cout << sql.str() << std::endl;
+
+    // Execute SQL statement //
+    rc = sqlite3_exec(m_db, sql.str().c_str(), db_callback, (void*)data, &zErrMsg);
+    if (rc!=SQLITE_OK) {
+        fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    } else {
+        fprintf(stdout, "add operation done successfully\n");
+    }
+   return rc;
+}

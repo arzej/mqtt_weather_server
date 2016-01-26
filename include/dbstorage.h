@@ -13,6 +13,8 @@ private:
     bool           table_exists();
     int            table_create();
     int            table_remove();
+    int            triggers_create();
+    int            table_average_create();
 public:
     dbstorage();
     void setPath(const char *path);
