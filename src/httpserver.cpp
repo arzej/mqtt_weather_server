@@ -37,7 +37,7 @@ int httpserver::init() {
         m_soupServer= soup_server_new (SOUP_SERVER_SERVER_HEADER,
                                        "simple-httpd ", NULL);
 		if (m_soupServer) {
-            soup_server_listen_all (m_soupServer, (guint)18080,
+            soup_server_listen_all (m_soupServer, (guint)8000,
                                     (SoupServerListenOptions)0, &error);
             soup_server_add_handler(m_soupServer,
                                     NULL,
