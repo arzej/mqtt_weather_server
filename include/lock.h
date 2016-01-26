@@ -10,8 +10,7 @@ public:
     static lock& getInstance();
     bool isLocked();
     lock();
-	~lock();
+    ~lock();
 };
 
 #endif	/* LOCK_H */
-

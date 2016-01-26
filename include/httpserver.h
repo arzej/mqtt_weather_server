@@ -4,6 +4,7 @@
 #include <libsoup/soup.h>
 #include <map>
 #include <string>
+#include "sem.h"
 
 class httpserver
 {
@@ -34,6 +35,7 @@ private:
     typedef std::map<std::string, http_handler_t> http_req_paths_t;
     typedef std::pair<std::string, http_handler_t> http_req_paths_pair_t;
     http_req_paths_t m_reqPaths;
+    sem m_reqSem;
 };
 
 #endif	/* HTTPDCORE_H */

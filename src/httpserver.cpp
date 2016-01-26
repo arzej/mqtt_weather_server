@@ -4,6 +4,7 @@
 #include <libsoup/soup.h>
 #include "httpd.h"
 #include "httpserver.h"
+#include "sem.h"
 
 #define HTTP_PAGE_ERROR_404 "<html>Error 404 - The requested URL was not found</html>"
 
@@ -46,6 +47,7 @@ int httpserver::term() {
 int httpserver::registerHttpCallbackRequest(const char* path, httpd::uri_handler_f handler, void* param) {
     int result = -1;
     if (path) {
+        slock l(m_reqSem);
         std::string pathString(path);
         http_req_paths_t::iterator it = m_reqPaths.find(pathString);
         if (it == m_reqPaths.end() && handler) {
