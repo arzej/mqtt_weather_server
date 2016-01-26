@@ -6,10 +6,12 @@
 #include <iostream>
 #include <unistd.h>
 #include <exception>
+#include <glib.h>
 #include "dbstorage.h"
 #include "mqttserver.h"
 #include "lock.h"
 #include "httpd.h"
+#include "rest.h"
 
 static int run = 1;
 
@@ -20,6 +22,7 @@ void handle_signal(int s) {
 
 int main(int argc, char *argv[]) {
     int i, j;
+    GMainLoop* ml = NULL;
     mqttserver mqtt;
     lock l;
     if (!l.isLocked()) {
@@ -54,14 +57,17 @@ int main(int argc, char *argv[]) {
     dbstorage::getInstance().init("test.db");
     mqtt.start();
     httpd::getInstance().init();
+    rest::getInstance().init();
     signal(SIGINT, handle_signal);
     signal(SIGTERM, handle_signal);
+    ml = g_main_loop_new(NULL, FALSE);
     while(run) {
-        sleep(1);
+        g_main_loop_run(ml);
 	}
     std::cout << "bye bye" << std::endl;
+    rest::getInstance().term();
+    httpd::getInstance().term();
     mqtt.term();
     dbstorage::getInstance().term();
-    httpd::getInstance().term();
 	return 0;
 }

@@ -31,6 +31,16 @@ private:
     void soupServerCallback1(SoupServer *server, SoupMessage *msg,
                              const char *path, GHashTable *query,
                              SoupClientContext *client, gpointer user_data);
+    void do_put(SoupServer *server,
+                SoupMessage *msg,
+                const char *path);
+    void do_get(SoupServer *server,
+                SoupMessage *msg,
+                const char *path);
+    int do_rest(SoupServer *server,
+                SoupMessage *msg,
+                const char *path);
+    void handleGetCookieMsg(httpd::req_data_t *req, const char* cookieHdr);
     SoupServer* m_soupServer;
     typedef std::map<std::string, http_handler_t> http_req_paths_t;
     typedef std::pair<std::string, http_handler_t> http_req_paths_pair_t;

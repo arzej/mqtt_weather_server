@@ -5,7 +5,6 @@ rest::rest() {
 }
 
 rest::~rest() {
-
 }
 
 rest& rest::getInstance() {
@@ -14,7 +13,13 @@ rest& rest::getInstance() {
 }
 
 int rest::init() {
-    int result  = httpd::getInstance().registerHttpCallbackRequest("/", on_www_index_html, NULL);
+    int result;
+    result  = httpd::getInstance().registerHttpCallbackRequest("/",
+                                                               on_www_index_html,
+                                                               NULL);
+    result |= httpd::getInstance().registerHttpCallbackRequest("/index.html",
+                                                               on_www_index_html,
+                                                               NULL);
     return result;
 }
 
