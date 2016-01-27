@@ -13,7 +13,7 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/arzej/mqtt_weather_server.git
-PKG_SOURCE_VERSION:=cf1b06c5f734d864384956dd03282d666236c96b
+PKG_SOURCE_VERSION:=86b9a92d3fd8845d0a6b981b280cf73d8870a3e1
 
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -24,15 +24,15 @@ CMAKE_INSTALL:=1
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
 
-define Package/mqtt
+define Package/mqttws
 	SECTION:=net
 	CATEGORY:=Network
 	TITLE:=mqttws
-	DEPENDS:=+glib2 +librt +libpthread +libstdcpp +libsoup +glib2 +libmosquittopp +libmosquitto
+	DEPENDS:=+glib2 +librt +libpthread +libstdcpp +libsoup +glib2 +libmosquittopp +libmosquitto +libsqlite3
 endef
 
 define Package/mqttws/description
-        mqtt
+        mqttws
 endef
 
 define Package/mqttws/install
