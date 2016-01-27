@@ -28,6 +28,7 @@ private:
         httpd::uri_handler_f handler;
         void* handlerParam;
     } http_handler_t;
+    bool path_exists(const char* name);
     void soupServerCallback1(SoupServer *server, SoupMessage *msg,
                              const char *path, GHashTable *query,
                              SoupClientContext *client, gpointer user_data);

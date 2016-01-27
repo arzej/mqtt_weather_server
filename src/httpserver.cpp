@@ -228,6 +228,12 @@ int httpserver::do_rest(SoupServer *server,
     return reqHandled;
 }
 
+bool httpserver::path_exists(const char* name)
+{
+    struct stat buffer;
+    return (stat (name, &buffer) == 0);
+}
+
 void httpserver::soupServerCallback1(SoupServer *server,
                                      SoupMessage *msg,
                                      const char *path,
@@ -246,8 +252,12 @@ void httpserver::soupServerCallback1(SoupServer *server,
     if (msg->request_body->length) {
         g_print ("%s\n", msg->request_body->data);
     }
-    if (do_rest(server,msg,path)!=0) {
-        file_path = g_strdup_printf ("./www/%s", path);
+    if (do_rest(server, msg, path)!=0) {
+        if (!path_exists("/usr/share/mqttws")) {
+            file_path = g_strdup_printf ("./www/%s", path);
+        } else {
+            file_path = g_strdup_printf ("/usr/share/mqttws/%s", path);
+        }
         if (msg->method == SOUP_METHOD_GET || msg->method == SOUP_METHOD_HEAD) {
             do_get (server, msg, file_path);
         }
