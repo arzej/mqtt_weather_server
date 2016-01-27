@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
         dbpath = "test.db";
     }
     std::cout << "params:" << std::endl;
-    std::cout << "dbpath " << dbpath << std::endl;
+    std::cout << "dbpath:" << dbpath << std::endl;
     dbstorage::getInstance().init("test.db");
     mqtt.start();
     httpd::getInstance().init();

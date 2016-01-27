@@ -29,8 +29,8 @@ dbstorage::dbstorage(const char* path): m_path(path) {
 }
 
 dbstorage& dbstorage::getInstance() {
-  static dbstorage db;
-  return db;
+    static dbstorage db;
+    return db;
 }
 
 int dbstorage::init(const char *path) {
